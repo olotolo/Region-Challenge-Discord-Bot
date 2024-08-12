@@ -11,18 +11,18 @@ const client = new Client({
 });
 
 const regions = [
-    "Bandle City",
+    "Bandle", //Bandle City
     "Bilgewater",
     "Demacia",
     "Ionia",
     "Ixtal",
     "Noxus",
     "Piltover",
-    "Shadow Isles",
+    "Shadow", //Shadow Isles
     "Shurima",
     "Targon",
-    "The Freljord",
-    "The Void",
+    "Freljord", //The Freljord
+    "Void", //The Void
     "Zaun"
 ];
 
@@ -49,7 +49,7 @@ client.on('messageCreate', (message) => {
     if(message.author.bot) {
         return;
     }
-    if(message.content.toLowerCase() == 'regions'.toLowerCase()) {
+    if(message.content.toLowerCase().includes('regions'.toLowerCase())) {
         let text = "";
         for (var i = 0; i < regions.length; i++) {
             text += regions[i] + "\n";
@@ -57,7 +57,7 @@ client.on('messageCreate', (message) => {
         message.channel.send(text);
     }
     for(var i = 0; i < regions.length; i++) {
-        if(message.content.toLowerCase() == regions[i].toLowerCase()) {
+        if(message.content.toLowerCase().includes(regions[i].toLowerCase())) {
             message.channel.send({
                 
                 content: regions[i], files: [`./images/${images[i]}`]
