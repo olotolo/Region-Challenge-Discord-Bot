@@ -1,8 +1,9 @@
 //nodemon
-const {Client, IntentsBitField, MessageActivityType} = require('discord.js');
+const {Client, IntentsBitField, MessageActivityType, MessageReaction} = require('discord.js');
 const fs = require('node:fs').promises;
 const { send } = require('node:process');
 const axios = require('axios');
+const { randomInt } = require('node:crypto');
 
 require ('dotenv').config();
 const client = new Client({
@@ -36,8 +37,8 @@ const regions = [
     "Zaun"
 ];
 
-//const rndInt = Math.floor(Math.random() * regions.length) + 1
-//    console.log(rndInt)
+
+    
 
 const images = [
     "BandleCity.png",
@@ -64,7 +65,7 @@ async function getData() {
     return JSON.parse(fileContent);
 }
 
-/*
+
 const getJoke = async (message) => {
     try {
         const response = await axios.get('https://v2.jokeapi.dev/joke/Any');
@@ -79,18 +80,21 @@ const getJoke = async (message) => {
         console.error('Error fetching joke:', error);
     }
 };
-*/
+
 client.on('messageCreate', async (message) => {
     if(message.author.bot) {
         return;
     }
+    if(message.channel.id != 1293646897726099538 && message.channel.id != 1292042141538975764) {
+        return;
+    }
 
-    if(message.content.includes("joke")) {
-        //getJoke(message);
+    if(message.content.includes("!joke")) {
+        getJoke(message);
     }
 
     if(message.author.id == 187575087329837057) {
-        if(message.content == 'RESET') {
+        if(message.content == '!RESET') {
             let json = "[]";
             fs.writeFile('./data.txt', json, 'utf8', (err) => {
                 if (err) {
@@ -102,14 +106,20 @@ client.on('messageCreate', async (message) => {
         }
     }
 
-    if(message.content == 'win') {
+    if(message.content == '!random') {
+        const rndInt = Math.floor(Math.random() * regions.length) + 1;
+        sendRegion(rndInt, message);
+        console.log(rndInt);
+    }
+
+    if(message.content == '!win') {
         userCache.forEach(element => {
             console.log(element);
         });
         ChallengeWon(messageCache, message);
     }
 
-    if(message.content == 'stats') {
+    if(message.content == '!stats') {
         getData().then(data => {
             data.forEach(player => {
                 if(player.id == message.author.id) {
@@ -156,8 +166,8 @@ client.on('messageCreate', async (message) => {
             }
         });
     }
-
-    if(message.content.toLowerCase().includes('regions'.toLowerCase())) {
+    
+    if(message.content.toLowerCase().includes('!regions'.toLowerCase())) {
         let text = "";
         for (var i = 0; i < regions.length; i++) {
             text += regions[i] + "\n";
@@ -165,7 +175,7 @@ client.on('messageCreate', async (message) => {
         message.channel.send(text);
     }
     for(var i = 0; i < regions.length; i++) {
-        if(message.content.toLowerCase().includes(regions[i].toLowerCase())) {
+        if(message.content.toLowerCase().includes("!"+regions[i].toLowerCase())) {
             sendRegion(i, message);
         }
     }
